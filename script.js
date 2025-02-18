@@ -1,8 +1,6 @@
 const owner = "desertbloomfarm";  // Твой GitHub логин
 const repo = "desertbloomfarm.github.io"; // Название репозитория
 
-const githubToken = "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"; // Временный токен для тестов
-
 document.getElementById("saveBtn").addEventListener("click", async () => {
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("content").value;
@@ -22,7 +20,6 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
             method: "POST",
             headers: {
                 "Accept": "application/vnd.github.v3+json",
-                "Authorization": `Bearer ${githubToken}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
