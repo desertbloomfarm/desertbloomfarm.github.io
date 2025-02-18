@@ -11,8 +11,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug Token  # ⬅️ Добавлена отладка токена
-        run: echo "Token: ${{ secrets.GH_TOKEN }}"
+      - name: Debug Token  # ⬅️ Проверяем, передаётся ли токен
+        run: echo "Token is set"
 
       - name: Save HTML Page
         env:
@@ -24,4 +24,4 @@ jobs:
           echo -e "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлена страница: ${{ github.event.client_payload.title }}"
-          git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
