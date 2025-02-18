@@ -12,7 +12,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Debug Token
-        run: echo "Token: ${{ secrets.GH_TOKEN }}"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: echo "Token: $GH_TOKEN"
 
       - name: Save HTML Page
         env:
