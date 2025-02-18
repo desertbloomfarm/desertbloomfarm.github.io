@@ -14,7 +14,8 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
         method: "POST",
         headers: {
-            "Accept": "application/vnd.github.v3+json"
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": `Bearer YOUR_PERSONAL_ACCESS_TOKEN`
         },
         body: JSON.stringify({
             event_type: "save_page",
