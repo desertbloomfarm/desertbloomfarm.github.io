@@ -30,6 +30,9 @@ jobs:
           echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
           ls -la pages/
 
+          # ✅ Подтягиваем изменения перед коммитом, чтобы избежать конфликта
+          git pull --rebase origin main
+
           # 🟢 Отладка: Проверяем статус git
           git status
 
@@ -39,6 +42,4 @@ jobs:
           # 🟢 Отладка: Проверяем, что коммит применился
           git log --oneline -n 5
 
-          # ✅ Исправляем ошибку push → подтягиваем изменения перед пушем
-          git pull --rebase origin main
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
