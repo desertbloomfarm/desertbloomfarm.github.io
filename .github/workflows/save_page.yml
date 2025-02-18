@@ -30,7 +30,8 @@ jobs:
           echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
           ls -la pages/
 
-          # ✅ Подтягиваем изменения перед коммитом
+          # ✅ Подтягиваем последние изменения перед коммитом
+          git fetch origin main
           git pull --rebase origin main
 
           # 🟢 Отладка: Проверяем статус git
