@@ -11,14 +11,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Debug Token  # ⬅️ Добавлено для отладки
+        run: echo "Token: $GH_TOKEN"
+
       - name: Save HTML Page
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          mkdir -p pages  # ✅ Создаёт папку, если её нет
-          echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
+          mkdir -p pages
+          echo -e "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлена страница: ${{ github.event.client_payload.title }}"
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
