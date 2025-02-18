@@ -1,5 +1,5 @@
-const owner = "USERNAME";  // Твой GitHub логин
-const repo = "REPOSITORY"; // Название репозитория
+const owner = "desertbloomfarm";  // Твой GitHub логин
+const repo = "desertbloomfarm.github.io"; // Название репозитория
 
 document.getElementById("saveBtn").addEventListener("click", async () => {
     const title = document.getElementById("title").value.trim();
