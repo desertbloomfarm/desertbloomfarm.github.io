@@ -10,11 +10,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false  # ⬅️ Отключаем встроенные GitHub креды, используем свой токен
 
-      - name: Debug Token  # ⬅️ Проверяем, передаётся ли токен
-        run: echo "Token is set"
+      - name: Debug Token
+        run: echo "Token: ${{ secrets.GH_TOKEN }}"
 
       - name: Save HTML Page
         env:
@@ -22,20 +20,25 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          mkdir -p pages  # ✅ Создаёт папку, если её нет
 
-          # 🟢 Отладка: Проверяем содержимое перед сохранением
-          echo "🔍 DEBUG: Сохранение страницы..."
-          echo -e "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
-          ls -la pages/
+          # Проверка наличия директории
+          mkdir -p pages
+          ls -la pages  # Выведем содержимое папки pages
 
-          # 🟢 Отладка: Проверяем статус git
-          git status
+          # Отладочный вывод названия файла и содержимого
+          echo "Создаём файл: pages/${{ github.event.client_payload.title }}.html"
+          echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
 
+          # Проверка созданного файла
+          cat pages/${{ github.event.client_payload.title }}.html
+
+          # Добавляем в git и коммитим
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлена страница: ${{ github.event.client_payload.title }}"
 
-          # 🟢 Отладка: Проверяем, что коммит применился
-          git log --oneline -n 5
+          # Отладка перед пушем
+          git status
+          git log -1
 
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+          # Пуш изменений
+          git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
