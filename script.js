@@ -1,7 +1,7 @@
 const owner = "desertbloomfarm";  // Твой GitHub логин
 const repo = "desertbloomfarm.github.io"; // Название репозитория
 
-const githubToken = "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"; // Временный токен для тестов
+const githubToken = "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"; // Временный токен для тестов
 
 document.getElementById("saveBtn").addEventListener("click", async () => {
     const title = document.getElementById("title").value.trim();
