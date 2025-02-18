@@ -1,29 +1,48 @@
 const owner = "desertbloomfarm";  // Твой GitHub логин
 const repo = "desertbloomfarm.github.io"; // Название репозитория
 
+const githubToken = "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"; // Временный токен для тестов
+
 document.getElementById("saveBtn").addEventListener("click", async () => {
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("content").value;
 
     if (!title || !content) {
         alert("Введите название и содержимое страницы!");
+        console.error("Ошибка: title или content пустые.");
         return;
     }
 
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
-        method: "POST",
-        headers: {
-            "Accept": "application/vnd.github.v3+json"
-        },
-        body: JSON.stringify({
-            event_type: "save_page",
-            client_payload: { title, content }
-        })
-    });
+    console.log("📤 Отправка запроса в GitHub API...");
+    console.log("🔹 Заголовок страницы:", title);
+    console.log("🔹 Длина контента:", content.length, "символов");
 
-    if (response.ok) {
-        alert("Запрос отправлен в GitHub Actions. Подождите...");
-    } else {
-        alert("Ошибка при отправке запроса в GitHub Actions!");
+    try {
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/vnd.github.v3+json",
+                "Authorization": `Bearer ${githubToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                event_type: "save_page",
+                client_payload: { title, content }
+            })
+        });
+
+        console.log("🔄 Статус запроса:", response.status, response.statusText);
+
+        if (response.status === 204) {
+            alert("✅ Страница успешно отправлена в GitHub Actions!");
+            console.log("✅ Запрос успешно обработан.");
+        } else {
+            const result = await response.json();
+            alert("❌ Ошибка при отправке запроса!");
+            console.error("❌ Ошибка GitHub API:", result);
+        }
+    } catch (error) {
+        alert("⚠️ Ошибка сети или кода, проверьте консоль!");
+        console.error("⚠️ Ошибка во время выполнения запроса:", error);
     }
 });
