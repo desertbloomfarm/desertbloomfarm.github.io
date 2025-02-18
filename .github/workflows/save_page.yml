@@ -14,9 +14,7 @@ jobs:
       - name: Debug Token
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo "DEBUG: Token передан в переменную среды."
-          echo "Token: ${GH_TOKEN:0:4}****"  # Выводит только первые 4 символа токена для проверки
+        run: echo "🔍 DEBUG: Token передан? $GH_TOKEN"
 
       - name: Save HTML Page
         env:
@@ -25,30 +23,22 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          # 🔍 Проверяем, есть ли директория `pages`
-          echo "DEBUG: Проверяем директорию pages..."
-          mkdir -p pages
-          ls -la pages
+          mkdir -p pages  # ✅ Создаёт папку, если её нет
 
-          # 📄 Создаём файл и проверяем его
-          echo "DEBUG: Создаём файл pages/${{ github.event.client_payload.title }}.html"
+          # 🟢 Отладка: Проверяем содержимое перед сохранением
+          echo "🔍 DEBUG: Сохранение страницы..."
           echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
-          
-          echo "DEBUG: Проверяем содержимое созданного файла"
-          cat pages/${{ github.event.client_payload.title }}.html
+          ls -la pages/
 
-          # 🔄 Добавляем в Git
-          echo "DEBUG: Добавляем файл в git..."
+          # 🟢 Отладка: Проверяем статус git
+          git status
+
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлена страница: ${{ github.event.client_payload.title }}"
 
-          # ✅ Проверяем статус перед пушем
-          echo "DEBUG: Git status перед пушем:"
-          git status
+          # 🟢 Отладка: Проверяем, что коммит применился
+          git log --oneline -n 5
 
-          echo "DEBUG: Последний коммит:"
-          git log -1
-
-          # 🚀 Пушим изменения
-          echo "DEBUG: Пушим изменения в репозиторий"
+          # ✅ Исправляем ошибку push → подтягиваем изменения перед пушем
+          git pull --rebase origin main
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
