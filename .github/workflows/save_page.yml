@@ -21,26 +21,25 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          # Создаём папку, если её нет
-          mkdir -p pages  
+          mkdir -p pages  # ✅ Создаёт папку, если её нет
 
-          # Отладка перед сохранением файла
+          # 🟢 Отладка: Проверяем содержимое перед сохранением
           echo "🔍 DEBUG: Сохранение страницы..."
-          echo -e "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
-
-          # Проверяем, что файл создался
+          echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
           ls -la pages/
 
-          # Добавляем в git
+          # ✅ Подтягиваем последние изменения перед коммитом
+          git fetch origin main
+          git pull --rebase origin main
+
+          # 🟢 Отладка: Проверяем статус git
+          git status
+
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлена страница: ${{ github.event.client_payload.title }}"
 
-          # Проверяем статус git
-          git status
+          # 🟢 Отладка: Проверяем, что коммит применился
           git log --oneline -n 5
 
-          # Обновляем main перед пушем, чтобы избежать конфликтов
-          git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git main
-
-          # Пушим изменения
+          # ✅ Обычная отправка изменений
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
