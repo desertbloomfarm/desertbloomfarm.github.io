@@ -1,4 +1,4 @@
-name: Save Page
+name: Save HTML Page
 
 on:
   repository_dispatch:
@@ -11,18 +11,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Save HTML Page
+      - name: Debug Event Data
+        run: |
+          echo "🔍 Получены данные:"
+          echo "Название: ${{ github.event.client_payload.title }}"
+          echo "Содержимое: ${{ github.event.client_payload.content }}"
+
+      - name: Create and commit file
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          mkdir -p pages  # Создаём папку, если её нет
+          mkdir -p pages
           echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
-          
+
           git add pages/${{ github.event.client_payload.title }}.html
           git commit -m "Добавлен файл: ${{ github.event.client_payload.title }}.html"
-          
-          git pull --rebase origin main
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
