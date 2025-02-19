@@ -1,8 +1,8 @@
 name: Save HTML Page
 
 on:
-  repository_dispatch:
-    types: [save_page]
+  issues:
+    types: [opened]
 
 jobs:
   save_page:
@@ -12,11 +12,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug Event Data
+      - name: Extract Issue Data
         run: |
-          echo "🔍 Получены данные:"
-          echo "Название: ${{ github.event.client_payload.title }}"
-          echo "Содержимое: ${{ github.event.client_payload.content }}"
+          TITLE=$(echo "${{ github.event.issue.title }}" | sed 's/Создать файл: //')
+          CONTENT=$(echo "${{ github.event.issue.body }}" | sed -n '/```html/,/```/p' | sed '1d;$d')
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "CONTENT=$CONTENT" >> $GITHUB_ENV
 
       - name: Create and commit file
         env:
@@ -26,8 +27,8 @@ jobs:
           git config --global user.email "actions@github.com"
 
           mkdir -p pages
-          echo "${{ github.event.client_payload.content }}" > pages/${{ github.event.client_payload.title }}.html
+          echo "$CONTENT" > pages/$TITLE.html
 
-          git add pages/${{ github.event.client_payload.title }}.html
-          git commit -m "Добавлен файл: ${{ github.event.client_payload.title }}.html"
+          git add pages/$TITLE.html
+          git commit -m "Добавлен файл: $TITLE.html"
           git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
