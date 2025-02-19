@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createPageBtn.addEventListener("click", async function () {
         const title = prompt("Введите имя файла (без .html):");
-        if (!title) return alert("Имя файла не может быть пустым!");
+        if (!title) return alert("❌ Имя файла не может быть пустым!");
 
         const content = prompt("Введите содержимое файла:");
-        if (!content) return alert("Содержимое не может быть пустым!");
+        if (!content) return alert("❌ Содержимое не может быть пустым!");
 
         const repoOwner = "desertbloomfarm";
         const repoName = "desertbloomfarm.github.io";
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         } catch (error) {
             console.error("❌ Ошибка запроса:", error);
-            alert("Ошибка при отправке запроса.");
+            alert("❌ Ошибка при отправке запроса.");
         }
     });
 });
