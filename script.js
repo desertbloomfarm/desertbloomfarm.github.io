@@ -1,45 +1,28 @@
-const owner = "desertbloomfarm";  // Твой GitHub логин
-const repo = "desertbloomfarm.github.io"; // Название репозитория
+document.getElementById("createPageBtn").addEventListener("click", async function () {
+    const title = prompt("Введите имя файла (без .html):");
+    if (!title) return alert("Имя файла не может быть пустым!");
 
-document.getElementById("saveBtn").addEventListener("click", async () => {
-    const title = document.getElementById("title").value.trim();
-    const content = document.getElementById("content").value;
+    const content = prompt("Введите содержимое файла:");
+    if (!content) return alert("Содержимое не может быть пустым!");
 
-    if (!title || !content) {
-        alert("Введите название и содержимое страницы!");
-        console.error("Ошибка: title или content пустые.");
-        return;
-    }
+    const repoOwner = "desertbloomfarm";
+    const repoName = "desertbloomfarm.github.io";
 
-    console.log("📤 Отправка запроса в GitHub API...");
-    console.log("🔹 Заголовок страницы:", title);
-    console.log("🔹 Длина контента:", content.length, "символов");
+    const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/dispatches`, {
+        method: "POST",
+        headers: {
+            "Accept": "application/vnd.github.v3+json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            event_type: "save_page",
+            client_payload: { title, content }
+        })
+    });
 
-    try {
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
-            method: "POST",
-            headers: {
-                "Accept": "application/vnd.github.v3+json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                event_type: "save_page",
-                client_payload: { title, content }
-            })
-        });
-
-        console.log("🔄 Статус запроса:", response.status, response.statusText);
-
-        if (response.status === 204) {
-            alert("✅ Страница успешно отправлена в GitHub Actions!");
-            console.log("✅ Запрос успешно обработан.");
-        } else {
-            const result = await response.json();
-            alert("❌ Ошибка при отправке запроса!");
-            console.error("❌ Ошибка GitHub API:", result);
-        }
-    } catch (error) {
-        alert("⚠️ Ошибка сети или кода, проверьте консоль!");
-        console.error("⚠️ Ошибка во время выполнения запроса:", error);
+    if (response.status === 204) {
+        alert(`✅ Файл ${title}.html успешно создан!`);
+    } else {
+        alert(`❌ Ошибка: ${response.status} \n${await response.text()}`);
     }
 });
